@@ -1,34 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Provider } from 'react-redux'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css'
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
+//import ProductInfoComponent from './components/productInfo/ProductInfoComponent'
+import { SignupPage } from './pages/SignupPage';
+import store from './core/redux/store/store';
+//import ProductCreationComponent from './components/productCreation/ProductCreationComponent';
+import ProfileComponent from './components/profile/ProfileComponent';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<LoginPage/>}/>
+          <Route path='/signup' element={<SignupPage/>}/>
+          <Route path='/home' element={<HomePage/>}/>
+          {/* <Route path='/info' element={<ProductInfoComponent/>}/> */}
+          {/* <Route path='/creation' element={<ProductCreationComponent/>}/> */}
+          <Route path='/profile' element={<ProfileComponent/>}/>
+
+          
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   )
 }
 

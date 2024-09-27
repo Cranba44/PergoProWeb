@@ -5,8 +5,8 @@ const {getAllProduct, getProductById, createProduct, updateProduct, deleteProduc
 
 router.get('/', getAllProduct)
 router.get('/:id', getProductById)
-router.patch('/:id', updateProduct)
-router.delete('/:id', deleteProduct)
-router.post('/:id', createProduct)
+router.delete('/deleteProduct/:id', deleteProduct)
+router.patch('/update/:id', updateProduct)
+router.post('/createProduct/:id', createProduct)
 
 module.exports = router

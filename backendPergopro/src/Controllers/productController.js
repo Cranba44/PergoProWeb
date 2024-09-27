@@ -4,9 +4,10 @@ exports.getAllProduct = async (req, res) => {
     try {
 
         const allProducts = await productModel.find()
+        console.log("Productos obtenidos de la base de datos:", allProducts);
         const resProduct = allProducts.map(product => {
             return {
-                id: product.id,
+                id: product._id,
                 name: product.name,
                 category: product.category,
                 price: product.price,
