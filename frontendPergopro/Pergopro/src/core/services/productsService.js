@@ -5,10 +5,10 @@ export const getAllProduct = async () => {
     return result.data
 }
 
-export const getProductById = async (idProduct) => {
-    const res = await fetch(`http://localhost:3000/products/${idProduct}`)
+export const getProductById = async (id) => {
+    const res = await fetch(`http://localhost:3000/products/getProductById/${id}`)
     const result = await res.json()
-    return result.product
+    return result.products
 }
 
 

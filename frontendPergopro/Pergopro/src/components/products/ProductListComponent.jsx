@@ -17,12 +17,10 @@ const ProductsListComponent = () => {
     const navigate= useNavigate();
     
 
-   
-    //const userRole = user.role;
-    const goInfo = (idProduct,) => {
+    const goInfo = (id) => {
         navigate('/info',{
             state: {
-                idProduct,
+                id
             }
         },
         )
@@ -57,11 +55,9 @@ const ProductsListComponent = () => {
                 : (
                     <>
                     
-                        {/* {userRole === 'admin' && (<div> <button onClick={goCreation}>Introducir festival</button></div>)} */}
                     
                     
                     <Row xs={1} md={2} lg={4} className="cardProduct-container g-5 p-5">
-        {/* //? He importado cardgroup y card desde la libreria de react-bootstrap */}
                         {
                             products.map((p, idx)=> (
                                 <Col key={idx}>
@@ -74,7 +70,7 @@ const ProductsListComponent = () => {
                                             </Card.Text>
                                             <Card.Footer>
                                                 <small className="text-muted">{p.description}</small>
-                                                <button onClick={()=>goInfo(p._id)}>+ Info</button>
+                                                <button onClick={()=>goInfo(p.id)}>+ Info</button>
                                                 
                                                 
                                             </Card.Footer>

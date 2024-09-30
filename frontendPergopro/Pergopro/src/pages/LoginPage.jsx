@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { doLoginActions } from "../components/user/UserActions";
 import { useState } from "react";
 import HomePage from "./HomePage";
-// import ErrorGeneralComponent from '../components/registrationForm/ErrorGeneralComponent';
-// import ErrorComponent from '../components/registrationForm/ErrorComponent';
+import ErrorGeneralComponent from '../components/registrationForm/ErrorGeneralComponent';
+import ErrorComponent from '../components/registrationForm/ErrorComponent';
 
 
 const initialValuesForm = {
@@ -14,7 +14,8 @@ const initialValuesForm = {
     lastName:'',
     username:'',
     email: '',
-     password:'' 
+    password:'',
+    //birthdate:'', 
      
 }
 const userSchema = Yup.object({
@@ -22,12 +23,10 @@ const userSchema = Yup.object({
     lastName:Yup.string().required('You must enter a lastname'), 
     username:Yup.string().required('Must be an unique username'),
     email: Yup.string().email().required('An email is a must'),
-     password:Yup.string().required().min(4, 'Pass need to be larger than 4 characters')
+    password:Yup.string().required().min(4, 'Pass need to be larger than 4 characters'),
+    //birthdate: Yup.date().required('Birthdate is required').min(new Date(1900, 0, 1), 'Birthdate cannot be before 1900').max(new Date(), 'Birthdate cannot be in the future')
 })
 
-const submitHandler = () => {
-    alert('Registration succesfull!')
-}
 
 
 
@@ -39,7 +38,6 @@ const LoginPage = () => {
 
     const [flagLogin, setFlagLogin] = useState(true);
     const [loginInfo, setLoginInfo] = useState({})
-    const [registerInfo, setRegisterInfo] = useState({});
 
     
 
@@ -51,7 +49,6 @@ const LoginPage = () => {
         console.log('Usuario logeado')
     }
  
-    //Pasamos los valores tomados del formulario formik para que se tomen como body en el backend
     const doRegister = async (values) => {
         const userInfo= await signUp(values)
         dispatch(doLoginActions({
@@ -67,12 +64,7 @@ const LoginPage = () => {
         })
     }
 
-    // const handlerRegisterInfo = (name, value) => {
-    //     setRegisterInfo({
-    //         ...registerInfo,
-    //         [name]: value
-    //     })
-    // }
+
   return (
     <div>
        
@@ -101,7 +93,7 @@ const LoginPage = () => {
                                 <button onClick={doLogin}>Log in</button> 
                             </div>
                             <div>
-                                <button onClick={() => setFlagLogin(false)}>Join us?</button>
+                                <button onClick={() => setFlagLogin(false)}>Join us</button>
 
                             </div>
                             
@@ -161,13 +153,19 @@ const LoginPage = () => {
                                                     }
                                                     <Field type="password" placeholder='password' name='password' ></Field>
                                                 </div>
+                                                {/* <div style={{display:'flex', flexDirection: 'column', gap: 5}}>
+                                                    <span>Birthdate</span>
+                                                    {
+                                                        errors && <ErrorMessage name='birthdate' component={ErrorComponent}/>
+                                                    }
+                                                    <Field type="date" placeholder='birthdate' name='DD-MM-YYYY' ></Field>
+                                                </div> */}
                                                 <div>
-                                                    <button type='submit'  >Sign up</button>
+                                                    <button type='submit' >Sign up</button>
                                                 </div>
                                                 
                                         </Form>
-                                        // onClick={doRegister}
-                                        // onChange={(e) => handlerRegisterInfo(e.target.name, e.target.value)}
+                                   
                                     )}        
                                 </Formik>
 

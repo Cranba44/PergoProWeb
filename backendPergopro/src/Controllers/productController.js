@@ -32,8 +32,8 @@ exports.getProductById = async (req, res) => {
     try {
         const  {id}  = req.params
         const product = await productModel.findById(id)
-        res.status(200).json(product)
-    } catch (error) {
+        res.status(200).json({ status: 'Succeded', product: product})    }
+        catch (error) {
         res.status(500).json({ status: 'Failed', message: error.message })
     }
 }

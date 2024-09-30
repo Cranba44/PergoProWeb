@@ -4,7 +4,7 @@ const {getAllProduct, getProductById, createProduct, updateProduct, deleteProduc
 
 
 router.get('/', getAllProduct)
-router.get('/:id', getProductById)
+router.get("/getProductById/:id", getProductById)
 router.delete('/deleteProduct/:id', deleteProduct)
 router.patch('/update/:id', updateProduct)
 router.post('/createProduct/:id', createProduct)

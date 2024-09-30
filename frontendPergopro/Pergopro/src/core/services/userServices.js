@@ -49,13 +49,16 @@ export const signUp = async (newUser) => {
 }
 
 export const getUserById = async (id) => {
+
     const res = await fetch(`http://localhost:3000/login/getUserById/${id}`)
+    console.log('fecth', res)
     const result = await res.json()
+    console.log('parseo objeto resultado ', result)
     return result.user
 }
 
 
-export const updateUser = async(id, newUserUpdated) => {
+export const updateUser = async(id, updatedUser) => {
     const res = await fetch(`http://localhost:3000/login/update/${id}`, {
         method: 'PATCH',
         headers: {
@@ -63,7 +66,7 @@ export const updateUser = async(id, newUserUpdated) => {
         },
         body: JSON.stringify(
             {
-                ...newUserUpdated
+                ...updatedUser
             }
         )
     })

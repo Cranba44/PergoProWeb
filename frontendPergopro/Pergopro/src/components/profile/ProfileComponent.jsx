@@ -1,70 +1,77 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getUserById, updateUser, deleteUser } from "../../core/services/userServices"; // Añadimos deleteUser
+import { getUserById, updateUser, deleteUser } from "../../core/services/userServices"; 
 import { loadUser } from "../user/UserActions";
 import { useEffect, useState } from "react";
 
 const ProfileComponent = () => {
-  const [profileInfo, setProfileInfo] = useState(undefined);
-  const [profileInit, setProfileInit] = useState(undefined);
-  const [newProfileModification, setNewProfileModification] = useState();
-
-  const user = useSelector((state) => state.userReducer.user);
-  const [isEditing, setIsEditing] = useState(undefined);
+const [profileInfo, setProfileInfo] = useState(undefined); 
+  const [profileInit, setProfileInit] = useState(undefined);  
+  const [newUserUpdated, setNewUserUpdated] = useState({});   
+  
+  const user = useSelector((state) => state.userReducer.user); 
+  const [isEditing, setIsEditing] = useState(false);         
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
 
   const goHomePage = () => {
     navigate("/home");
   };
 
-  // Handler para guardar cambios
   const saveHandler = async () => {
-    setIsEditing(false);
-    setProfileInit(profileInfo);
-    // Actualizar usuario
-    const saveAux = await updateUser(user._id, newProfileModification);
-
-    dispatch(
-      loadUser({
-        user: saveAux,
-      })
-    );
+    try {
+      setIsEditing(false);
+      const updatedUser = {
+        ...profileInfo,         
+        ...newUserUpdated,     
+      };
+      const saveAux = await updateUser(user._id, updatedUser);
+   
+      setProfileInfo(saveAux);    
+      setProfileInit(saveAux);    
+      dispatch(loadUser({ user: saveAux })); 
+    } catch (error) {
+      console.error("Error saving user information", error);
+    }
   };
+
 
   const cancelHandler = () => {
     setIsEditing(false);
-    setProfileInfo(profileInit);
+    setProfileInfo(profileInit); 
   };
 
-  const profileModificationHandler = (fieldName, fieldValue) => {
-    setNewProfileModification({
-      ...newProfileModification,
+
+  const updatedUserHandler = (fieldName, fieldValue) => {
+    setNewUserUpdated({
+      ...newUserUpdated,
       [fieldName]: fieldValue,
     });
   };
 
+
   const load = async () => {
+    console.log(user._id)
     const userAux = await getUserById(user._id);
-    dispatch(
-      loadUser({
-        user: userAux,
-      })
-    );
+    console.log(userAux)
+    setProfileInfo(userAux);  
+    setProfileInit(userAux);   
+    dispatch(loadUser({ user: userAux }));
   };
 
   useEffect(() => {
+    console.log(user._id)
     load();
-  }, []);
+  }, [user._id]);
 
-  // Handler para eliminar perfil
   const deleteHandler = async () => {
     try {
-      await deleteUser(user._id); // Eliminar usuario
-      navigate("/"); // Redirigir a la página de inicio tras la eliminación
+      await deleteUser(user._id);
     } catch (error) {
       console.error("Error deleting the user profile", error);
     }
+    navigate("/"); 
   };
 
   return (
@@ -73,59 +80,50 @@ const ProfileComponent = () => {
         <button onClick={goHomePage}>Volver</button>
       </div>
       <div>
-        <div>
-          <h3 style={{ fontWeight: "bold", textTransform: "uppercase" }}>
-            Información sobre tu perfil
-          </h3>
+        <h3 style={{ fontWeight: "bold", textTransform: "uppercase" }}>
+          Información sobre tu perfil
+        </h3>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 5,
+            justifyContent: "center",
+          }}
+        >
+          <button
+            style={{ fontWeight: "bold", textTransform: "uppercase" }}
+            onClick={() => setIsEditing(true)}
+          >
+            Modificar perfil
+          </button>
+          
+          <button
+            onClick={deleteHandler} 
+            style={{
+              fontWeight: "bold",
+              textTransform: "uppercase",
+              backgroundColor: "red",
+              color: "white",
+            }}
+          >
+            Eliminar perfil
+          </button>
+        </div>
+
+        {isEditing && (
           <div
             style={{
+              marginTop: 5,
               display: "flex",
               flexDirection: "row",
               gap: 5,
               justifyContent: "center",
             }}
           >
-            <button
-              style={{ fontWeight: "bold", textTransform: "uppercase" }}
-              onClick={() => setIsEditing(true)}
-            >
-              Modificar perfil
-            </button>
-            <button
-              onClick={goHomePage}
-              style={{ fontWeight: "bold", textTransform: "uppercase" }}
-            >
-              Volver
-            </button>
-            <button
-              onClick={deleteHandler} 
-              style={{
-                fontWeight: "bold",
-                textTransform: "uppercase",
-                backgroundColor: "red",
-                color: "white",
-              }}
-            >
-              Eliminar perfil
-            </button>
+            <button onClick={saveHandler}>Guardar</button>
+            <button onClick={cancelHandler}>Cancelar</button>
           </div>
-        </div>
-
-        {isEditing && (
-          <>
-            <div
-              style={{
-                marginTop: 5,
-                display: "flex",
-                flexDirection: "row",
-                gap: 5,
-                justifyContent: "center",
-              }}
-            >
-              <button onClick={saveHandler}>Guardar</button>
-              <button onClick={cancelHandler}>Cancelar</button>
-            </div>
-          </>
         )}
 
         <div>
@@ -147,7 +145,7 @@ const ProfileComponent = () => {
                     name="firstName"
                     defaultValue={user.firstName}
                     onChange={(e) =>
-                      profileModificationHandler(e.target.name, e.target.value)
+                      updatedUserHandler(e.target.name, e.target.value)
                     }
                   />
                 ) : (
@@ -155,16 +153,14 @@ const ProfileComponent = () => {
                 )}
               </div>
               <div>
-                <span style={{ fontWeight: "bold", fontSize: 24 }}>
-                  Apellido:{" "}
-                </span>
+                <span style={{ fontWeight: "bold", fontSize: 24 }}>Apellido: </span>
                 {isEditing ? (
                   <input
                     type="text"
                     name="lastName"
                     defaultValue={user.lastName}
                     onChange={(e) =>
-                      profileModificationHandler(e.target.name, e.target.value)
+                      updatedUserHandler(e.target.name, e.target.value)
                     }
                   />
                 ) : (
@@ -179,7 +175,7 @@ const ProfileComponent = () => {
                     name="email"
                     defaultValue={user.email}
                     onChange={(e) =>
-                      profileModificationHandler(e.target.name, e.target.value)
+                      updatedUserHandler(e.target.name, e.target.value)
                     }
                   />
                 ) : (
@@ -187,16 +183,14 @@ const ProfileComponent = () => {
                 )}
               </div>
               <div>
-                <span style={{ fontWeight: "bold", fontSize: 24 }}>
-                  Fecha de nacimiento:
-                </span>
+                <span style={{ fontWeight: "bold", fontSize: 24 }}>Fecha de nacimiento:</span>
                 {isEditing ? (
                   <input
                     type="date"
                     name="birthdate"
                     defaultValue={user.birthdate}
                     onChange={(e) =>
-                      profileModificationHandler(e.target.name, e.target.value)
+                      updatedUserHandler(e.target.name, e.target.value)
                     }
                   />
                 ) : (
